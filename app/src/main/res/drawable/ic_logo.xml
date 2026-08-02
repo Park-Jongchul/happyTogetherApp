@@ -1,0 +1,27 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+
+    <!-- 둥근 사각 배경 (반투명 유리) -->
+    <path
+        android:pathData="M28,4 L92,4 A24,24 0 0 1 116,28 L116,92 A24,24 0 0 1 92,116 L28,116 A24,24 0 0 1 4,92 L4,28 A24,24 0 0 1 28,4 Z"
+        android:fillColor="#33FFFFFF"
+        android:strokeColor="#59FFFFFF"
+        android:strokeWidth="2" />
+
+    <!-- 맞닿은 두 사람 = 두 번째 시작 -->
+    <path
+        android:pathData="M46,44 m-11,0 a11,11 0 1,0 22,0 a11,11 0 1,0 -22,0"
+        android:fillColor="#FFFFFFFF" />
+    <path
+        android:pathData="M74,44 m-11,0 a11,11 0 1,0 22,0 a11,11 0 1,0 -22,0"
+        android:fillColor="#CCFFFFFF" />
+    <path
+        android:pathData="M24,90 C24,74 33,64 46,64 C59,64 68,74 68,90 Z"
+        android:fillColor="#FFFFFFFF" />
+    <path
+        android:pathData="M52,90 C52,74 61,64 74,64 C87,64 96,74 96,90 Z"
+        android:fillColor="#CCFFFFFF" />
+</vector>

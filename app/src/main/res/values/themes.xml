@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Theme.HappyTogether" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/brand</item>
+        <item name="colorPrimaryDark">@color/brand_dark</item>
+        <item name="colorAccent">@color/accent</item>
+        <item name="android:windowBackground">@color/bg</item>
+        <!-- edge-to-edge: 웹의 safe-area-inset 이 동작하도록 -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+        <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="o_mr1">shortEdges</item>
+    </style>
+
+    <!-- 앱 실행 직후 흰 화면 대신 브랜드 스플래시 노출 (웹 D01 스플래시로 자연스럽게 이어짐) -->
+    <style name="Theme.HappyTogether.Splash" parent="Theme.HappyTogether">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+    </style>
+
+</resources>

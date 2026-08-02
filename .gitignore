@@ -1,0 +1,14 @@
+*.iml
+.gradle/
+build/
+local.properties
+.idea/
+.DS_Store
+
+# 웹 저장소에서 복사되는 자산 (빌드 시 자동 생성)
+app/src/main/assets/web/
+
+# 서명 키 — 절대 커밋 금지
+*.keystore
+*.jks
+keystore.properties
