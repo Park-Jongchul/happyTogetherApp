@@ -39,6 +39,23 @@ android {
     }
 }
 
+/* ── APK 파일 이름 ────────────────────────────
+   Build → Build APK(s) 로 만들어지는 파일 이름을 happyTogether.apk 로 고정합니다.
+   debug / release 는 서로 다른 폴더에 생성되므로 이름이 같아도 충돌하지 않습니다.
+     app/build/outputs/apk/debug/happyTogether.apk
+     app/build/outputs/apk/release/happyTogether.apk
+
+   빌드 타입을 이름에 넣고 싶다면 아래 문자열을
+   "happyTogether-" + variant.name + ".apk" 로 바꾸면 됩니다.           */
+androidComponents {
+    onVariants { variant ->
+        variant.outputs.forEach { output ->
+            (output as? com.android.build.api.variant.impl.VariantOutputImpl)
+                ?.outputFileName?.set("happyTogether.apk")
+        }
+    }
+}
+
 dependencies {
     implementation("androidx.core:core-ktx:1.15.0")
     implementation("androidx.appcompat:appcompat:1.7.0")

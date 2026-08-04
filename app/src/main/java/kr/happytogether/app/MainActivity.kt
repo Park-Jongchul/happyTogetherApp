@@ -124,6 +124,8 @@ class MainActivity : AppCompatActivity() {
                 val url = request.url
                 // 앱 내부(번들 자산)는 WebView 가 그대로 처리
                 if (url.host == ASSET_DOMAIN) return false
+                // 우리 웹앱(GitHub Pages)도 WebView 안에서 처리
+                if (url.host == REMOTE_HOST && (url.path ?: "").startsWith(REMOTE_PATH)) return false
                 // 그 외 외부 링크(카카오T · 지도 · 결제 등)는 시스템에 위임
                 return openExternally(url)
             }
@@ -278,14 +280,22 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val ASSET_DOMAIN = "appassets.androidplatform.net"
+        private const val REMOTE_HOST  = "park-jongchul.github.io"
+        private const val REMOTE_PATH  = "/happyTogether"
 
         /**
-         * 번들된 웹앱을 띄웁니다. (오프라인 동작 · 즉시 로딩)
-         * 서버의 최신본을 바로 반영하고 싶다면 아래 REMOTE_URL 로 바꾸세요.
+         * GitHub Pages 최신본을 띄웁니다.
+         * 웹만 배포해도 앱 업데이트 없이 바로 반영되지만, 오프라인에서는 열리지 않습니다.
          */
-        private const val START_URL = "https://$ASSET_DOMAIN/assets/web/index.html"
+        private const val START_URL = "https://$REMOTE_HOST$REMOTE_PATH/"
 
+        /**
+         * 오프라인 동작이 필요하면 START_URL 대신 이 주소를 쓰세요.
+         *
+         * 경로 앞에 assets 를 또 붙이면 안 됩니다. AssetsPathHandler 가 "/" 에 등록돼 있어서
+         * /web/index.html 이 곧 app/src/main/assets/web/index.html 입니다.
+         */
         @Suppress("unused")
-        const val REMOTE_URL = "https://park-jongchul.github.io/happyTogether/"
+        const val BUNDLED_URL = "https://$ASSET_DOMAIN/web/index.html"
     }
 }

@@ -109,14 +109,19 @@ keytool -genkey -v -keystore release.keystore -alias happytogether \
 
 ---
 
-## 번들 대신 서버 최신본을 띄우려면
+## 서버 최신본 대신 번들 자산을 띄우려면
 
-`MainActivity.kt` 의 `START_URL` 을 `REMOTE_URL` 로 바꾸면 됩니다.
-앱 업데이트 없이 웹만 배포해도 즉시 반영되지만, 오프라인에서는 열리지 않습니다.
+현재 앱은 **GitHub Pages 최신본**(`https://park-jongchul.github.io/happyTogether/`)을 띄웁니다.
+웹만 배포하면 앱 업데이트 없이 즉시 반영되지만, 오프라인에서는 열리지 않습니다.
+
+오프라인 동작이 필요하면 `MainActivity.kt` 의 `START_URL` 을 `BUNDLED_URL` 로 바꾸세요.
 
 ```kotlin
-webView.loadUrl(REMOTE_URL)   // https://park-jongchul.github.io/happyTogether/
+private const val START_URL = BUNDLED_URL   // https://appassets.androidplatform.net/web/index.html
 ```
+
+> 번들 주소에 `assets` 를 또 붙이면 안 됩니다. `AssetsPathHandler` 가 `"/"` 에 등록돼 있어
+> `/web/index.html` 이 곧 `app/src/main/assets/web/index.html` 입니다.
 
 ---
 
