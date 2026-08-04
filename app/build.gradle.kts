@@ -72,12 +72,27 @@ val copyWebAssets by tasks.registering(Copy::class) {
     from(webSrc) {
         include("index.html")
         include("assets/**")
+        exclude("**/.DS_Store")          // macOS 부산물은 APK 에 넣지 않는다
     }
     into(webDst)
 }
 
 tasks.named("preBuild") { dependsOn(copyWebAssets) }
 
+/* ── clean ────────────────────────────────────
+   macOS 의 Finder / Spotlight 가 삭제 도중 build 폴더에 .DS_Store 를 다시 만들면
+   Gradle 의 Delete 태스크가 "New files were found" 로 실패합니다.
+   Gradle 이 지우기 전에 우리가 먼저, 몇 번 재시도하며 확실히 비웁니다.        */
+val buildDirFile = layout.buildDirectory.get().asFile
+
 tasks.named("clean", Delete::class) {
     delete(webDst)
+    doFirst {
+        val dir = buildDirFile
+        repeat(5) { if (dir.exists()) dir.deleteRecursively() }
+        if (dir.exists()) {
+            logger.warn("clean: ${dir.absolutePath} 를 비우지 못했습니다. " +
+                "Finder 에서 이 폴더를 열어 두었다면 닫고 다시 시도하세요.")
+        }
+    }
 }
