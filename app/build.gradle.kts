@@ -31,7 +31,12 @@ android {
     }
     kotlinOptions { jvmTarget = "17" }
 
-    buildFeatures { viewBinding = true }
+    // AGP 8 부터 BuildConfig 는 기본으로 생성되지 않습니다.
+    // MainActivity 의 BuildConfig.DEBUG(웹 디버깅 스위치) 때문에 필요합니다.
+    buildFeatures {
+        viewBinding = true
+        buildConfig = true
+    }
 }
 
 dependencies {
