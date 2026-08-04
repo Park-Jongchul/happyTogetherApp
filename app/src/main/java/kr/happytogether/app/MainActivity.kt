@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Rect
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -15,7 +16,10 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.webkit.WebViewAssetLoader
 import androidx.webkit.WebViewFeature
@@ -67,6 +71,7 @@ class MainActivity : AppCompatActivity() {
         refresh = findViewById(R.id.refresh)
 
         setupWebView()
+        setupKeyboardInsets()
         setupBackPress()
 
         if (savedInstanceState == null) {
@@ -181,6 +186,42 @@ class MainActivity : AppCompatActivity() {
         refresh.setOnRefreshListener { webView.reload() }
         // 최상단일 때만 당겨서 새로고침 (채팅·리스트 스크롤과 충돌 방지)
         refresh.setOnChildScrollUpCallback { _, _ -> webView.scrollY > 0 }
+    }
+
+    /**
+     * 소프트 키보드가 떠도 WebView 아래쪽이 가려지지 않게 합니다.
+     *
+     * edge-to-edge(`setDecorFitsSystemWindows(false)`)에서는 매니페스트의
+     * `adjustResize` 가 동작하지 않아 창이 줄어들지 않습니다. 그러면 가입 화면처럼
+     * 입력칸이 많은 페이지에서 하단 버튼이 키보드 뒤에 깔리고 스크롤도 되지 않습니다.
+     * 키보드 높이만큼 컨테이너에 아래 여백을 주어 WebView 뷰포트를 직접 줄입니다.
+     */
+    private fun setupKeyboardInsets() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            ViewCompat.setOnApplyWindowInsetsListener(refresh) { v, insets ->
+                val ime = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+                val nav = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
+                // 내비게이션 바 영역은 웹의 env(safe-area-inset-bottom) 이 이미 처리합니다.
+                v.updatePadding(bottom = (ime - nav).coerceAtLeast(0))
+                insets
+            }
+            return
+        }
+
+        // API 24~29: ime() 인셋을 받을 수 없어 보이는 창 높이로 키보드를 추정합니다.
+        val root = window.decorView
+        val visible = Rect()
+        root.viewTreeObserver.addOnGlobalLayoutListener {
+            root.getWindowVisibleDisplayFrame(visible)
+            val hidden = root.height - visible.bottom
+            // 내비게이션 바 정도의 작은 차이는 키보드로 보지 않습니다.
+            val pad = if (hidden > root.height / 5) {
+                val nav = ViewCompat.getRootWindowInsets(root)
+                    ?.getInsets(WindowInsetsCompat.Type.navigationBars())?.bottom ?: 0
+                (hidden - nav).coerceAtLeast(0)
+            } else 0
+            if (refresh.paddingBottom != pad) refresh.updatePadding(bottom = pad)
+        }
     }
 
     /** 외부 스킴/도메인은 브라우저·해당 앱으로 */
